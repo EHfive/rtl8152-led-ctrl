@@ -527,13 +527,14 @@ fn handle_cmd_set(cmd: CmdSet) -> Result<()> {
     let ctrl = CtrlDevice::new(device.open()?)?;
     print_device_line(&ctrl)?;
 
-    let mut led_config = if let Some(raw) = cmd.raw {
+    let led_config = if let Some(raw) = cmd.raw {
         led::LedGlobalConfig::from_raw(raw.0)
     } else {
-        led::LedGlobalConfig::read_from(&ctrl)?
+        let mut config = led::LedGlobalConfig::read_from(&ctrl)?;
+        cmd.update_led_config(&mut config, !cmd.no_default);
+        config
     };
 
-    cmd.update_led_config(&mut led_config, !cmd.no_default);
     print_led_config(&led_config);
 
     if cmd.dry {
