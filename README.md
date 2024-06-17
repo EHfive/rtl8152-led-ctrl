@@ -4,7 +4,7 @@ A tool to configure LEDs on RTL8152/RTL8153 series USB NICs.
 
 ## Why
 
-Some board manufacture has LED configurations burned wrong or just leave default configuration unchanged on RTL8152 series USB NICs, causing LEDs behavior to not align with hardware marks. My NanoPi R2S is one of the instance.
+Some board manufacturer has LED configurations burned wrong or just leave default configuration unchanged on RTL8152 series USB NICs, causing LEDs behavior to not align with hardware marks. My NanoPi R2S is one of the instance.
 
 There is some patch addressing the issue by setting the LED configuration on r8152 driver load, however that requires compiling kernel modules and is not very portable. And given it's just a single USB control transfer that finishes the job, which is easy to hack using libusb, so I have written this tool to allow setting LED configuration on ease.
 
@@ -44,6 +44,14 @@ Bus(005:002) ID(0bda:8153) Realtek USB 10/100/1000 LAN (000000000000) Ver(V9)
   Blink interval: Link speed dependent
   Blink duty cycle(ratio): 50%
   Raw register value: 0xe0087
+```
+
+The LED configuration would be lost on NIC power down. To make this kind of persists, add an udev rule to set LED configuration on USB NIC plugged in.
+
+```
+# /etc/udev/rules.d/99-rtl8152-led-ctrl.rules
+# replace USB vendor ID and product ID with IDs of your device
+ACTION=="add" SUBSYSTEM=="usb", ATTRS{idVendor}=="0bda", ATTRS{idProduct}=="8153", RUN+="/path/to/rtl8152-led-ctrl set --device %s{busnum}:%s{devnum}"
 ```
 
 You can also set LED register value manually. See "Customizable LED Configuration" section in RTL8152B and RTL8153B datasheets for bit definitions.
