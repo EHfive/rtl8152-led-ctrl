@@ -6,15 +6,17 @@ A tool to configure LEDs on RTL8152/RTL8153 series USB NICs.
 
 Some board manufacturer has LED configurations burned wrong or just leave default configuration unchanged on RTL8152 series USB NICs, causing LEDs behavior to not align with hardware marks. My NanoPi R2S is one of the instance.
 
-There is some patch addressing the issue by setting the LED configuration on r8152 driver load, however that requires compiling kernel modules and is not very portable. And given it's just a single USB control transfer that finishes the job, which is easy to hack using libusb, so I have written this tool to allow setting LED configuration on ease.
+There is some patch addressing the issue by setting the LED configuration on r8152 driver load, however that requires compiling kernel modules and is not very portable. And given it's just a single USB control transfer that finishes the job, which is easy to hack using libusb, so I wrote this tool to allow setting LED configuration on ease.
 
 ## Installation
+
+This tool requires libusb.
 
 ```
 cargo install https://github.com/EHfive/rtl8152-led-ctrl.git
 ```
 
-For Nix, the package available as `github:EHfive/einat-ebpf#default`. Or use `github:EHfive/einat-ebpf#nixosModules.default` to include the package into your NixOS.
+For Nix, the package is available as `github:EHfive/einat-ebpf#default`. Or use `github:EHfive/einat-ebpf#nixosModules.default` to include the package into your NixOS.
 
 ## Usage
 
@@ -32,7 +34,7 @@ Commands:
   reg               Read/write register directly
 ```
 
-To set LED configuration to our opinionated default value, run the following. It would shows formatted result configuration.
+To set LED configuration to our opinionated default value, run the following command. It would also shows formatted configuration result.
 
 ```
 $ rtl8152-led-ctrl set
@@ -54,7 +56,7 @@ Bus(005:002) ID(0bda:8153) Realtek USB 10/100/1000 LAN (000000000000) Ver(V9)
   Raw register value: 0xe0087
 ```
 
-The LED configuration would be lost on NIC power down. To make this kind of persists, add an udev rule to set LED configuration whenever the USB NIC plugged in. For NixOS, your can set this rule in `services.udev.extraRules`, see [example](https://github.com/EHfive/flakes/blob/c19876ecbb448144bedc3de9302eec6b21fd16f8/machines/r2s/hardware.nix#L79-L81) in my config.
+Note the LED configuration would be lost on NIC power down. Therefore to make it kind of persists, we can add an udev rule to set LED configuration whenever the USB NIC plugged in. For NixOS, you can set this rule in `services.udev.extraRules`, see [example](https://github.com/EHfive/flakes/blob/c19876ecbb448144bedc3de9302eec6b21fd16f8/machines/r2s/hardware.nix#L79-L81) in my config.
 
 ```
 # /etc/udev/rules.d/99-rtl8152-led-ctrl.rules
@@ -62,15 +64,15 @@ The LED configuration would be lost on NIC power down. To make this kind of pers
 ACTION=="add" SUBSYSTEM=="usb", ATTRS{idVendor}=="0bda", ATTRS{idProduct}=="8153", RUN+="/path/to/rtl8152-led-ctrl set --device %s{busnum}:%s{devnum}"
 ```
 
-You can also set LED register value manually. See "Customizable LED Configuration" section in RTL8152B and RTL8153B datasheets for bit definitions.
+You can also set LED register value manually. Refer "Customizable LED Configuration" section in RTL8152B and RTL8153B datasheets for bit definitions.
 
 ```bash
 # LED selection and feature settings
-reg --offset 0xdd90 --width 16 --write 0x0087
+rtl8152-led-ctrl reg --offset 0xdd90 --width 16 --write 0x0087
 # LED blink settings
-reg --offset 0xdd90 --width 16 --write 0x000e
+rtl8152-led-ctrl reg --offset 0xdd92 --width 16 --write 0x000e
 # Or just combined:
-reg --offset 0xdd90 --width 32 --write 0x000e0087
+rtl8152-led-ctrl reg --offset 0xdd90 --width 32 --write 0x000e0087
 ```
 
 ## How
