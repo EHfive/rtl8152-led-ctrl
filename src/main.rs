@@ -53,7 +53,7 @@ const RTL8152_DEVICE_VID_PIDS: &[(u16, u16)] = &[
 ];
 
 #[derive(FromArgs, PartialEq, Debug)]
-/// Realtek RTL8125/8153 LED Control
+/// Realtek RTL8152/8153 LED Control
 #[argh(note = "Repo: https://github.com/EHfive/rtl8152-led-ctrl\nby @EHfive")]
 struct TopArgs {
     #[argh(subcommand)]

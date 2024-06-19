@@ -21,7 +21,7 @@ For Nix, the package available as `github:EHfive/einat-ebpf#default`. Or use `gi
 ```
 Usage: rtl8152-led-ctrl <command> [<args>]
 
-Realtek RTL8125/8153 LED Control
+Realtek RTL8152/8153 LED Control
 
 Options:
   --help            display usage information

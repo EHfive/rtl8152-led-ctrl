@@ -33,7 +33,7 @@
         };
 
       overlay = final: prev: {
-        rtl8125-led-ctrl = prev.callPackage package { };
+        rtl8152-led-ctrl = prev.callPackage package { };
       };
 
       defaultModule = {
