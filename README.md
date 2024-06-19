@@ -16,7 +16,7 @@ This tool requires libusb.
 cargo install https://github.com/EHfive/rtl8152-led-ctrl.git
 ```
 
-For Nix, the package is available as `github:EHfive/einat-ebpf#default`. Or use `github:EHfive/einat-ebpf#nixosModules.default` to include the package into your NixOS.
+For Nix, the package is available as `github:EHfive/rtl8152-led-ctrl#default`. Or use `github:EHfive/rtl8152-led-ctrl#nixosModules.default` to include the package into your NixOS.
 
 ## Usage
 

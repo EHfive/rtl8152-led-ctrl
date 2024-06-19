@@ -47,7 +47,7 @@
     in
     {
       overlays.default = overlay;
-      modules.default = defaultModule;
+      nixosModules.default = defaultModule;
 
       packages = forAllSystems (system:
         let
